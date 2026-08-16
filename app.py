@@ -27,7 +27,7 @@ def run_agentic_analysis(user_prompt, thermal_data, gemini_key):
     
     try:
         genai.configure(api_key=gemini_key)
-        model = genai.GenerativeModel("models/gemini-1.5-latest")
+        model = genai.GenerativeModel("models/gemini-2.5-flash")
         
         agent_system_prompt = f"""
         You are 'HeatGuard AI', an autonomous urban climate risk agent built for FortyGuard Hackathon '26.
