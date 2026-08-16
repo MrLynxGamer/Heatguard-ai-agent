@@ -14,32 +14,16 @@ st.subheader("Autonomous Urban Heat Safety Agent")
 st.write("Powered by **FortyGuard Hyperlocal Thermal API** and **Google Gemini AI**.")
 st.markdown("---")
 
-# Sidebar for API keys
-with st.sidebar:
-    st.header("🔑 Credentials Setup")
-    fg_api_key = st.text_input("FortyGuard API Key", type="password")
-    gemini_api_key = st.text_input("Gemini API Key", type="password")
-    st.info("Keys are processed securely in session memory.")
+# Securely load Gemini API key from Streamlit Secrets
+gemini_api_key = st.secrets.get("GEMINI_API_KEY", "")
 
 def fetch_fortyguard_temp(lat, lon, api_key):
-    if not api_key:
-        return {"temperature_2m": 38.5, "status": "Simulated Active Data (Enter API Key for live feed)"}
-    
-    url = f"https://api.fortyguard.com/v1/temperature/snapshot?lat={lat}&lon={lon}"
-    headers = {"Authorization": f"Bearer {api_key}"}
-    
-    try:
-        response = requests.get(url, headers=headers, timeout=5)
-        if response.status_code == 200:
-            return response.json()
-        else:
-            return {"temperature_2m": 37.0, "status": f"API HTTP {response.status_code}"}
-    except Exception as e:
-        return {"temperature_2m": 37.0, "status": f"Connection Error: {str(e)}"}
+    # Simulated fallback since FortyGuard key is pending
+    return {"temperature_2m": 38.5, "status": "Simulated Active Data (FortyGuard Fallback Mode)"}
 
 def run_agentic_analysis(user_prompt, thermal_data, gemini_key):
     if not gemini_key:
-        return "⚠️ Please enter your Gemini API Key in the sidebar to run the AI Agent."
+        return "⚠️ Error: Gemini API Key not found in Streamlit Secrets."
     
     try:
         genai.configure(api_key=gemini_key)
@@ -82,7 +66,7 @@ user_query = st.text_area(
 
 if st.button("🚀 Analyze Heat Risk with Agent", type="primary"):
     with st.spinner("1/2 Fetching FortyGuard 2m Thermal Data..."):
-        thermal_result = fetch_fortyguard_temp(latitude, longitude, fg_api_key)
+        thermal_result = fetch_fortyguard_temp(latitude, longitude, "")
         
     st.success(f"FortyGuard Data Retrieved! Current Local Temp: {thermal_result.get('temperature_2m')} °C")
     
