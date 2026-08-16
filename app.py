@@ -11,7 +11,7 @@ st.title("🌡️ HeatGuard AI")
 st.subheader("Autonomous Urban Heat Safety Agent")
 st.write(
     "Powered by **FortyGuard Hyperlocal Thermal API** and **Google Gemini"
-    " Interactions API**."
+    " SDK**."
 )
 st.markdown("---")
 
@@ -52,12 +52,12 @@ def run_agentic_analysis(user_prompt, thermal_data, gemini_key):
         Keep the response clear, structured, and practical.
         """
 
-    # Call the Interactions API using client.create
-    interaction = client.create(
+    # Correct SDK method call
+    response = client.models.generate_content(
         model="gemini-2.5-flash",
-        input=agent_system_prompt,
+        contents=agent_system_prompt,
     )
-    return interaction.output_text
+    return response.text
   except Exception as e:
     return f"Error connecting to Gemini API: {str(e)}"
 
@@ -88,7 +88,7 @@ if st.button("🚀 Analyze Heat Risk with Agent", type="primary"):
       f" {thermal_result.get('temperature_2m')} °C"
   )
 
-  with st.spinner("2/2 Gemini Interactions API processing risk advisory..."):
+  with st.spinner("2/2 Gemini AI processing risk advisory..."):
     agent_output = run_agentic_analysis(user_query, thermal_result, gemini_api_key)
 
   st.markdown("### 🤖 Agentic Advisory Output")
